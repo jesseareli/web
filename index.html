@@ -1,0 +1,152 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú con Botones</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>¡Panadería Marcianas!</h1>
+
+    <!-- Sección de imagen y texto -->
+    <div class="texto-imagen">
+        <img src="pan1.jpeg" alt="Imagen de un pan redondo" class="img-redonda">
+        <div class="texto">
+            <p>
+                Disfruta de nuestra panadería en línea:<br>
+                Panes frescos, Pasteles y bebidas perfectas.<br>
+                Descubre articulos irresistibles y haz tus compras súper fácil.
+            </p>
+        </div>
+    </div>
+
+    <!-- Contenedor de los botones -->
+    <div class="container">
+        <button class="button" onclick="goToPage('pan.html')" aria-label="Ir a la sección de Panes">
+            <img src="px.JPG" alt="Panes">
+            
+        </button>
+        <button class="button" onclick="goToPage('pastel.html')" aria-label="Ir a la sección de Pasteles">
+            <img src="p.JPG" alt="Pasteles">
+        </button>
+        <button class="button" onclick="goToPage('bebidas.html')" aria-label="Ir a la sección de Bebidas">
+            <img src="b.JPG" alt="Bebidas">
+        </button>
+        <button class="button" onclick="goToPage('cumple.html')" aria-label="Ir a la sección de Cumpleaños">
+            <img src="cumple.jpg" alt="Cumpleaños">
+        </button>
+    </div>
+
+    <!-- Sistema de calificación -->
+    <div class="rating">
+        
+        <input type="radio" name="rating" id="star5" value="5">
+        <label for="star5">&#9733;</label>
+        <input type="radio" name="rating" id="star4" value="4">
+        <label for="star4">&#9733;</label>
+        <input type="radio" name="rating" id="star3" value="3">
+        <label for="star3">&#9733;</label>
+        <input type="radio" name="rating" id="star2" value="2">
+        <label for="star2">&#9733;</label>
+        <input type="radio" name="rating" id="star1" value="1">
+        <label for="star1">&#9733;</label>
+        <p>¡Califica esta app!</p>
+    </div>
+
+    <!-- Contenedor para el mensaje de agradecimiento -->
+    <div id="thank-you-message" style="display: none; color: white; font-size: 20px; margin-top: 10px;">
+        ¡Gracias por tu calificación!
+    </div>
+
+    <!-- Script de JavaScript -->
+    <script>
+        // Función para redirigir a una página específica
+        function goToPage(url) {
+            window.location.href = url;
+        }
+
+        // Sistema de calificación
+        const stars = document.querySelectorAll('.rating input');
+        const thankYouMessage = document.getElementById('thank-you-message');
+
+        stars.forEach(star => {
+            star.addEventListener('change', () => {
+                thankYouMessage.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
+<script>
+    // Lista de productos disponibles
+    const products = [
+      { id: 'baguette', name: 'Baguette', price: 1.5, img: 'https://via.placeholder.com/80x80?text=Baguette' },
+      { id: 'croissant', name: 'Croissant', price: 2.0, img: 'https://via.placeholder.com/80x80?text=Croissant' },
+      { id: 'pan-integral', name: 'Pan Integral', price: 1.0, img: 'https://via.placeholder.com/80x80?text=Pan+Integral' }
+    ];
+
+    const productList = document.getElementById('productList');
+    const selectedList = document.getElementById('selectedList');
+    const totalElement = document.querySelector('.total');
+    const purchaseButton = document.getElementById('purchaseButton');
+
+    let orderDetails = { items: [], total: 0 };
+
+    // Generar productos dinámicamente
+    products.forEach(product => {
+      const productElement = document.createElement('div');
+      productElement.className = 'product';
+      productElement.innerHTML = 
+        <img src="${product.img}" alt="${product.name}">
+        <div class="product-details">
+          <p class="product-name">${product.name}</p>
+          <p class="product-price">$${product.price.toFixed(2)}</p>
+        </div>
+        <div class="product-quantity">
+          <label for="${product.id}">Cantidad:</label>
+          <input id="${product.id}" type="number" class="quantity-input" data-name="${product.name}" data-price="${product.price}" min="0" value="0">
+        </div>
+      ;
+      productList.appendChild(productElement);
+    });
+
+    // Actualizar resumen
+    productList.addEventListener('input', updateSelection);
+
+    function updateSelection() {
+      let total = 0;
+      selectedList.innerHTML = '';
+      orderDetails.items = [];
+
+      products.forEach(product => {
+        const input = document.getElementById(product.id);
+        const quantity = parseInt(input.value) || 0;
+
+        if (quantity > 0) {
+          const cost = product.price * quantity;
+          total += cost;
+
+          // Crear elemento en el resumen
+          const listItem = document.createElement('li');
+          listItem.textContent = ${product.name} x${quantity} - $${cost.toFixed(2)};
+          selectedList.appendChild(listItem);
+
+          orderDetails.items.push({ name: product.name, count: quantity, price: product.price });
+        }
+      });
+
+      orderDetails.total = total;
+      totalElement.textContent = Total: $${total.toFixed(2)};
+    }
+
+    // Enviar detalles de la orden
+    purchaseButton.addEventListener('click', () => {
+      if (orderDetails.total > 0) {
+        localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
+        window.location.href = 'pago.html';
+      } else {
+        alert('Por favor selecciona al menos un producto.');
+      }
+    });
+  </script>
